@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JEE.iml" filepath="$PROJECT_DIR$/JEE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spring-context_main.iml" filepath="$PROJECT_DIR$/.idea/modules/spring-context_main.iml" group="spring-context" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spring-context_test.iml" filepath="$PROJECT_DIR$/.idea/modules/spring-context_test.iml" group="spring-context" />
     </modules>
   </component>
 </project>

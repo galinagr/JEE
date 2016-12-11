@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean class="jdbc.controllers.CompaniesController" id="companiesController">
+        <property name="txManager" ref="txManager"/>
+        <property name="companiesDAO" ref="companiesDAO"/>
+    </bean>
+
+    <bean class="jdbc.controllers.DevelopersController" id="developersController">
+        <property name="txManager" ref="txManager"/>
+        <property name="developersDAO" ref="developersDAO"/>
+    </bean>
+
+    <bean class="jdbc.controllers.CustomersController" id="customersController">
+        <property name="txManager" ref="txManager"/>
+        <property name="customersDAO" ref="customersDAO"/>
+    </bean>
+
+    <bean class="jdbc.controllers.ProjectsController" id="projectsController">
+        <property name="txManager" ref="txManager"/>
+        <property name="projectsDAO" ref="projectsDAO"/>
+    </bean>
+
+    <bean class="jdbc.controllers.SkillsController" id="skillsController">
+        <property name="txManager" ref="txManager"/>
+        <property name="skillsDAO" ref="skillsDAO"/>
+    </bean>
+
+    <bean id="main" class="jdbc.Main">
+        <property name="developersController" ref="developersController"/>
+        <property name="companiesController" ref="companiesController"/>
+        <property name="customersController" ref="customersController"/>
+        <property name="projectsController" ref="projectsController"/>
+        <property name="skillsController" ref="skillsController"/>
+
+    </bean>
+
+    <bean id="developersDAO" class="jdbc.dao.DevelopersDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="companiesDAO" class="jdbc.dao.CompaniesDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="customersDAO" class="jdbc.dao.CustomersDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="projectsDAO" class="jdbc.dao.ProjectsDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="skillsDAO" class="jdbc.dao.SkillsDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="baseDAO" class="jdbc.dao.BaseDAO">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="dataSource">
+        <property name="driverClass" value="${jdbc.driver.class} "/>
+        <property name="jdbcUrl" value="${jdbc.url} "/>
+        <property name="user" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="minPoolSize" value="${jdbc.min.connections}"/>
+        <property name="maxPoolSize" value="${jdbc.max.connections}"/>
+        <property name="acquireIncrement" value="${jdbc.acquire.increment}"/>
+
+    </bean>
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+</beans>
