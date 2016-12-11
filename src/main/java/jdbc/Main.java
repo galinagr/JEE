@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 
 public class Main {
@@ -23,14 +25,19 @@ public class Main {
     private SkillsController skillsController;
 
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
+
         Driver driver = new oracle.jdbc.OracleDriver();
         try {
             DriverManager.registerDriver(driver);
         } catch (SQLException e) {
             LOGGER.error("ERROR IN Driver REGISTRATION");
         }
-        Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "galina", "galina");
+        GetJdbcProperties getJdbcProperties = new GetJdbcProperties().invoke();
+        String url = getJdbcProperties.getUrl();
+        String user = getJdbcProperties.getUser();
+        String password = getJdbcProperties.getPassword();
+        Connection conn = DriverManager.getConnection(url, user, password);
         ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
         Main main = context.getBean(Main.class);
         main.start();
@@ -54,7 +61,7 @@ public class Main {
 
     public void setProjectsController(ProjectsController projectsController) {
         this.projectsController = projectsController;
-        System.out.println("RESULT OF PROJECTS SQL: " + projectsController.updateProject("BANK6","FINE", 80, 10000, 80000,2006));
+        System.out.println("RESULT OF PROJECTS SQL: " + projectsController.updateProject("BANK6", "FINE", 80, 10000, 80000, 2006));
     }
 
     public void setSkillsController(SkillsController skillsController) throws SQLException {
@@ -69,5 +76,32 @@ public class Main {
         skillsController.getAllSkills().forEach(System.out::println);
         projectsController.getAllProjects().forEach(System.out::println);
 
+    }
+
+    private static class GetJdbcProperties {
+        private String url;
+        private String user;
+        private String password;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public GetJdbcProperties invoke() throws IOException {
+            Properties prop = new Properties();
+            prop.load(Main.class.getResourceAsStream("/jdbc.properties"));
+            url = prop.getProperty("jdbc.url");
+            user = prop.getProperty("jdbc.user");
+            password = prop.getProperty("jdbc.password");
+            return this;
+        }
     }
 }
